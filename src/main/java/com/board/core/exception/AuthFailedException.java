@@ -2,8 +2,8 @@ package com.board.core.exception;
 
 import com.board.core.exception.error.ErrorCode;
 
-public class UserNotFoundException extends CustomException{
-    public UserNotFoundException(ErrorCode errorCode) {
+public class AuthFailedException extends CustomException{
+    public AuthFailedException(ErrorCode errorCode) {
         super(errorCode);
     }
 }

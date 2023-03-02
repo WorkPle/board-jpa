@@ -3,6 +3,8 @@ package com.board.application.post.domain;
 import com.board.application.post.dto.PostResponse;
 import com.board.application.user.domain.User;
 import com.board.core.domain.BaseEntity;
+import com.board.core.exception.AuthFailedException;
+import com.board.core.exception.error.ErrorCode;
 import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
@@ -18,7 +20,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -73,13 +75,19 @@ public class Post extends BaseEntity {
         return new PostResponse(this.title, this.content, this.getCreated_at(), this.getCreated_by());
     }
 
+    public void isPossibleCreatePost(Long userId) {
+        if (!this.getUser().getId().equals(userId)) {
+            throw new AuthFailedException(ErrorCode.AUTH_FAILED);
+        }
+    }
+
     private void validateTitle(String title) {
-        Assert.notNull(title, "title must not be null");
-        Assert.hasText(title, "title must be at least 0 character long");
+        Assert.notNull(title, "제목을 입력해주세요.");
+        Assert.hasText(title, "제목을 한 글자 이상 입력해주세요.");
     }
 
     private void validateContent(String content) {
-        Assert.notNull(content, "content must not be null");
-        Assert.hasText(content, "content must be at least 0 character long");
+        Assert.notNull(content, "글을 입력해주세요.");
+        Assert.hasText(content, "글을 한 글자 이상 입력해주세요.");
     }
 }
